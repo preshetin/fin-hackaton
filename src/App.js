@@ -10,7 +10,11 @@ class App extends Component {
       <div className="App">
         <Header />
         <div class="container">
-          <Calculator />
+          <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <Calculator />
+            </div>
+          </div>
         </div>
       </div>
     );

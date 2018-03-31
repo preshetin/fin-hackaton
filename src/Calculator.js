@@ -24,6 +24,22 @@ class Calculator extends React.Component {
   }
 
   render() {
+
+    const TEMPLATES = [
+      {
+        slug: 'ooo',
+        title: 'Общество с органиченной ответственностью (ООО)',
+        shortName: 'ООО',
+        url: 'https://www.dropbox.com/s/e7egu2egqjn1prw/urlico-fizlico.docx?raw=1'
+      },
+      {
+        slug: 'ip',
+        title: 'Индивидуальный предприниматель (ИП)',
+        shortName: 'ИП',
+        url: 'https://www.dropbox.com/s/55se0m4lmzwu72v/ip-fizlico.docx?raw=1'
+      }
+    ];
+
     return (
       <div class="starter-template">
         <h1>Финансовый калькулятор</h1>
@@ -46,9 +62,7 @@ class Calculator extends React.Component {
             <label class="col-sm-4 control-label">Заказчик</label>
             <div class="col-sm-8">
               <select class="form-control" name="customer" id="customer" onChange={this.handleCustomerChange}>
-                <option value="ooo">Общество с органиченной ответственностью (ООО)</option>
-                <option value="ip">Индивидуальный предприниматель (ИП)</option>
-                <option value="fizik">Физическое лицо</option>
+                {TEMPLATES.map(template => <option value={template.slug}>{template.title}</option> )}
               </select>
             </div>
           </div>
@@ -75,7 +89,7 @@ class Calculator extends React.Component {
         </form>
         <div class="form-group">
           <div class="col-sm-offset-4 col-sm-8">
-            <button type="submit" class="btn btn-default">Скачать шаблон договора {this.state.customer}</button>
+            <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-success">Скачать шаблон договора {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
           </div>
         </div>
 
