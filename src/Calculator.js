@@ -58,15 +58,6 @@ class Calculator extends React.Component {
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="col-sm-4 control-label">Заказчик</label>
-            <div class="col-sm-8">
-              <select class="form-control" name="customer" id="customer" onChange={this.handleCustomerChange}>
-                {TEMPLATES.map(template => <option value={template.slug}>{template.title}</option> )}
-              </select>
-            </div>
-          </div>
-
 
           <div class="form-group">
             <label class="col-sm-4 control-label">Подоходный налог по договору подряда</label>
@@ -86,10 +77,19 @@ class Calculator extends React.Component {
               <p class="form-control-static" id="contractAmount" style={{ fontSize: "300%" }}>{Math.ceil(this.state.amount * 1.14)} BYN</p>
             </div>
           </div>
+          <hr />
+          <div class="form-group">
+            <label class="col-sm-4 control-label">Заказчик</label>
+            <div class="col-sm-8">
+              <select class="form-control" name="customer" id="customer" onChange={this.handleCustomerChange}>
+                {TEMPLATES.map(template => <option value={template.slug}>{template.title}</option> )}
+              </select>
+            </div>
+          </div>
         </form>
         <div class="form-group">
           <div class="col-sm-offset-4 col-sm-8">
-            <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-success">Скачать шаблон договора {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+            <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-success">Скачать договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
           </div>
         </div>
 
