@@ -132,19 +132,19 @@ class Calculator extends React.Component {
               <div class="form-group">
                 <label class="col-sm-4 control-label">Подоходный налог по договору подряда</label>
                 <div class="col-sm-8">
-                  <p class="form-control-static" id="podohNalog" style={{ fontSize: "200%", color: "grey" }}>{parseInt(this.state.amount * 1.14 * 0.13)} BYN</p>
+                  <p class="form-control-static" id="podohNalog" style={{ fontSize: "200%", color: "grey" }}>{   (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14 * 0.13) )}</p>
                 </div>
               </div>
               <div class="form-group">
                 <label class="col-sm-4 control-label">Страховые взносы по договору подряда</label>
                 <div class="col-sm-8">
-                  <p class="form-control-static" id="strahVznos" style={{ fontSize: "200%", color: "grey" }}>{parseInt(this.state.amount * 1.14 * 0.01)} BYN</p>
+                  <p class="form-control-static" id="strahVznos" style={{ fontSize: "200%", color: "grey" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14 * 0.01) )} </p>
                 </div>
               </div>
               <div class="form-group">
                 <label class="col-sm-4 control-label" >Сумма по договору подряда</label>
                 <div class="col-sm-8">
-                  <p class="form-control-static" id="contractAmount" style={{ fontSize: "300%" }}>{Math.ceil(this.state.amount * 1.14)} BYN</p>
+                  <p class="form-control-static" id="contractAmount" style={{ fontSize: "300%" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14) ) }</p>
                 </div>
               </div>
             </form>
