@@ -42,9 +42,10 @@ class Calculator extends React.Component {
 
     return (
       <div class="starter-template">
-        <h1>Финансовый калькулятор</h1>
-        <p class="lead">Введите сумму, которую хотите получить "на руки", и калькулятор рассчитает сумму договора с заказчиком</p>
-
+        <div class="calc-header">
+          <h1>Договор Подряда</h1>
+          <p class="lead">Введите сумму, которую хотите получить "на руки", и калькулятор рассчитает сумму договора с заказчиком</p>
+        </div>
         <div class="row">
           <div class="col-md-6" style={{ borderRight: "1px solid #eee" }}>
             <form class="form-horizontal">
@@ -87,10 +88,9 @@ class Calculator extends React.Component {
                 </select>
               </div>
             </div>
-
             <div class="form-group">
               <div >
-                <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-success">Скачать договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+                <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-default">Скачать договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
               </div>
             </div>
 
