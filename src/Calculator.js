@@ -74,11 +74,27 @@ class Calculator extends React.Component {
 
   handleFormSubmit() {
     const st = this.state;
-    setTimeout(function () {
-        console.log(st);
-        st.isEmailSent = true;
-        this.setState(st);
-    }.bind(this), 1400);
+
+    axios({
+        method: 'post',
+        url: `https://vk2telegram-poster.herokuapp.com/api/leads`,
+        params: this.state
+    }).then(
+        response => {
+            console.log(response);
+            st.isEmailSent = true;
+            this.setState(st);
+        },
+        reject => {
+            console.log(reject)
+        }
+    );
+
+    // setTimeout(function () {
+    //     console.log(st);
+    //     st.isEmailSent = true;
+    //     this.setState(st);
+    // }.bind(this), 1400);
   }
 
   render() {
