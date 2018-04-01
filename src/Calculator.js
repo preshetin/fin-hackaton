@@ -1,14 +1,22 @@
 import React from 'react';
+import EmailInput from './EmailInput';
+import axios from 'axios';
 
 class Calculator extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
         amount: 100,
-        customer: 'ooo'
+        customer: 'ooo',
+        email: '',
+        isEmailSent: false,
+        shouldNotify: true
       }
       this.handleAmountChange = this.handleAmountChange.bind(this);
       this.handleCustomerChange = this.handleCustomerChange.bind(this);
+      this.handleShouldNotifyChange = this.handleShouldNotifyChange.bind(this);
+      this.handleEmailChange = this.handleEmailChange.bind(this);
+      this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   handleAmountChange(e) {
@@ -21,6 +29,56 @@ class Calculator extends React.Component {
     let state = this.state;
     state.customer = e.target.value;
     this.setState(state);
+  }
+
+  handleShouldNotifyChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleEmailChange(e) {
+    let state = this.state;
+    state.email = e.target.value;
+
+    this.setState(state);
+
+  }
+
+  isValidEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const result = re.test(String(email).toLowerCase());
+
+    return result;
+  }
+
+  isEmailError(email) {
+    if (email == '') {
+      return false;
+    }
+
+    return ! this.isValidEmail(email);
+  }
+
+  isFormSubmittable() {
+    if (this.state.email == '') {
+      return false;
+    }
+
+    return this.isValidEmail(this.state.email);
+  }
+
+  handleFormSubmit() {
+    const st = this.state;
+    setTimeout(function () {
+        console.log(st);
+        st.isEmailSent = true;
+        this.setState(st);
+    }.bind(this), 1400);
   }
 
   render() {
@@ -39,6 +97,18 @@ class Calculator extends React.Component {
         url: 'https://www.dropbox.com/s/55se0m4lmzwu72v/ip-fizlico.docx?raw=1'
       }
     ];
+
+    const submitButtonClass = this.isFormSubmittable() ? 'btn btn-primary' : 'btn btn-primary disabled';
+
+    const submitButton = this.state.isEmailSent ? (
+        <h2>✅ Email is sent!</h2>
+      ) : (
+        <div class="form-group">
+          <div>
+            <a type="submit" target="_blank" onClick={this.handleFormSubmit} class={submitButtonClass}>Отправить на почту договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+          </div>
+        </div>
+      );
 
     return (
       <div class="starter-template">
@@ -88,11 +158,13 @@ class Calculator extends React.Component {
                 </select>
               </div>
             </div>
-            <div class="form-group">
-              <div >
-                <a type="submit" target="_blank" href={TEMPLATES.find(template => template.slug == this.state.customer).url} class="btn btn-lg btn-default">Скачать договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
-              </div>
+            <EmailInput email={this.state.email} hasError={this.isEmailError(this.state.email)} handleChange={this.handleEmailChange} />
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="shouldNotify" checked={this.state.shouldNotify} onChange={this.handleShouldNotifyChange} /> Получать новости
+              </label>
             </div>
+            {submitButton}
 
           </div>
         </div>
