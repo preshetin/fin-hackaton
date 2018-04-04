@@ -14,7 +14,7 @@ class App extends Component {
         </div>
 
       <footer class="footer">
-        <p>2018 &copy; Tax Help <br /> <a target="_blank" href="https://www.dropbox.com/s/fy39x9d7t6as4hr/terms-of-use.docx">Правила использования</a> <br /> Контакты: <a href="mailto:alexei.alex-ogly@yandex.ru">alexei.alex-ogly@yandex.ru</a></p>
+        <p>2018 &copy; Tax Help <br /> <a target="_blank" href="https://www.dropbox.com/s/fy39x9d7t6as4hr/terms-of-use.docx">Правила использования</a> <br /> Есть вопрос? Пишите на <a href="mailto:dogovorpodryada.by@gmail.com">dogovorpodryada.by@gmail.com</a></p>
       </footer>
       </div>
     );

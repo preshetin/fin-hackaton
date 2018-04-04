@@ -1,5 +1,6 @@
 import React from 'react';
 import EmailInput from './EmailInput';
+import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 
 class Calculator extends React.Component {
@@ -8,9 +9,9 @@ class Calculator extends React.Component {
       this.state = {
         amount: 100,
         customer: 'ooo',
-        email: '',
-        isEmailSent: false,
-        shouldNotify: true
+        email: '', // example@user.com
+        shouldNotify: true,
+        'formState': 'not_submitted' // 'submitting' , 'submitted'
       }
       this.handleAmountChange = this.handleAmountChange.bind(this);
       this.handleCustomerChange = this.handleCustomerChange.bind(this);
@@ -18,6 +19,8 @@ class Calculator extends React.Component {
       this.handleEmailChange = this.handleEmailChange.bind(this);
       this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
+
+  notify = (type , message) => toast(message, { type: type });
 
   handleAmountChange(e) {
     let state = this.state;
@@ -74,6 +77,8 @@ class Calculator extends React.Component {
 
   handleFormSubmit() {
     const st = this.state;
+    st.formState = 'submitting';
+    this.setState(st);
 
     axios({
         method: 'post',
@@ -81,20 +86,23 @@ class Calculator extends React.Component {
         params: this.state
     }).then(
         response => {
-            console.log(response);
-            st.isEmailSent = true;
-            this.setState(st);
+          st.formState = 'submitted';
+          this.setState(st);
+          this.notify('success', "Договор отправлен на " + this.state.email);
         },
         reject => {
-            console.log(reject)
+          st.formState = 'submitted';
+          this.setState(st);
+          this.notify('error', "Что-то пошло не так. Попробуйте еще раз");
         }
     );
 
     // setTimeout(function () {
-    //     console.log(st);
-    //     st.isEmailSent = true;
+    //     st.formState = 'submitted';
     //     this.setState(st);
-    // }.bind(this), 1400);
+    //     this.notify('success', "Договор отправлен на " + this.state.email);
+    //     this.notify('error', "Что-то пошло не так. Попробуйте еще раз");
+    // }.bind(this), 1500);
   }
 
   render() {
@@ -114,17 +122,38 @@ class Calculator extends React.Component {
       }
     ];
 
-    const submitButtonClass = this.isFormSubmittable() ? 'btn btn-primary' : 'btn btn-primary disabled';
+    const submitButtonClass = (this.isFormSubmittable() || ! this.state.formState == 'submitting' )  ? 'btn btn-primary' : 'btn btn-primary disabled';
 
-    const submitButton = this.state.isEmailSent ? (
-        <h2>✅ Email is sent!</h2>
-      ) : (
-        <div class="form-group">
-          <div>
-            <a type="submit" target="_blank" onClick={this.handleFormSubmit} class={submitButtonClass}>Отправить на почту договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+    let submitButton;
+    switch (this.state.formState) {
+      case 'not_submitted':
+        submitButton = (
+          <div class="form-group">
+            <div>
+              <a type="submit" target="_blank" onClick={this.handleFormSubmit} class={submitButtonClass}>Отправить на почту договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+            </div>
           </div>
-        </div>
-      );
+        );
+        break;
+      case 'submitting':
+        submitButton = (
+          <div class="form-group">
+            <div>
+              <a type="submit" target="_blank" onClick={this.handleFormSubmit} class="btn btn-primary disabled">Подождите немного...</a>
+            </div>
+          </div>
+        );
+        break;
+      case 'submitted':
+        submitButton = (
+          <div class="form-group">
+            <div>
+              <a type="submit" target="_blank" onClick={this.handleFormSubmit} class={submitButtonClass}>Отправить на почту договор c {TEMPLATES.find(template => template.slug == this.state.customer).shortName}</a>
+            </div>
+          </div>
+        );
+        break;
+    }
 
     return (
       <div class="starter-template">
@@ -136,8 +165,8 @@ class Calculator extends React.Component {
           <div class="col-md-6" style={{ borderRight: "1px solid #eee" }}>
             <form class="form-horizontal">
               <div class="form-group">
-                <label for="inputPassword" class="col-sm-4 control-label">Я хочу получить</label>
-                <div class="col-sm-8">
+                <label for="inputPassword" class="col-sm-6 control-label">Я хочу получить</label>
+                <div class="col-sm-6">
                   <div class="input-group">
                     <div class="input-group-addon">BYN</div>
                     <input type="text" class="form-control input-lg" id="amount" value={this.state.amount} onChange={this.handleAmountChange} autoFocus={true} placeholder="Amount" />
@@ -146,21 +175,21 @@ class Calculator extends React.Component {
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-4 control-label">Подоходный налог по договору подряда</label>
-                <div class="col-sm-8">
-                  <p class="form-control-static" id="podohNalog" style={{ fontSize: "200%", color: "grey" }}>{   (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14 * 0.13) )}</p>
+                <label class="col-sm-6 control-label">Подоходный налог по договору подряда (13% от суммы договора)</label>
+                <div class="col-sm-6">
+                  <p class="form-control-static" id="podohNalog" style={{ fontSize: "200%", color: "grey" }}>{   (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount  / 0.86 * 0.13) )}</p>
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-4 control-label">Страховые взносы по договору подряда</label>
-                <div class="col-sm-8">
-                  <p class="form-control-static" id="strahVznos" style={{ fontSize: "200%", color: "grey" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14 * 0.01) )} </p>
+                <label class="col-sm-6 control-label">Страховые взносы по договору подряда (1% от суммы договора)</label>
+                <div class="col-sm-6">
+                  <p class="form-control-static" id="strahVznos" style={{ fontSize: "200%", color: "grey" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount / 0.86 * 0.01) )} </p>
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-4 control-label" >Сумма по договору подряда</label>
-                <div class="col-sm-8">
-                  <p class="form-control-static" id="contractAmount" style={{ fontSize: "300%" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount * 1.14) ) }</p>
+                <label class="col-sm-6 control-label" >Сумма по договору подряда</label>
+                <div class="col-sm-6">
+                  <p class="form-control-static" id="contractAmount" style={{ fontSize: "300%" }}>{ (new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'BYN' }).format(this.state.amount  / 0.86) ) }</p>
                 </div>
               </div>
             </form>
@@ -184,6 +213,7 @@ class Calculator extends React.Component {
 
           </div>
         </div>
+        <ToastContainer />
 
       </div>
     );
